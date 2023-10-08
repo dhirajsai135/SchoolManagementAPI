@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<StudentContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("SchoolCS")));
 builder.Services.TryAddScoped<IStudentService, StudentService>();
+builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
