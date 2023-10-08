@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace SchoolManagementAPI.Service;
+﻿namespace SchoolManagementAPI.Service;
 
 public class StudentService : IStudentService
 {
@@ -10,22 +8,6 @@ public class StudentService : IStudentService
     {
         _studentContext = studentContext;
         _mapper = mapper;
-    }
-
-    public async Task<bool> DeleteAsync(int studentId)
-    {
-        var student = await _studentContext.Students.FindAsync(studentId);
-        if (_studentContext == null)
-        {
-            return false;
-        }
-        if (student == null)
-        {
-            return false;
-        }
-        _studentContext.Students.Remove(student);
-        await _studentContext.SaveChangesAsync();
-        return true;
     }
 
     public async Task<List<Student>> GetAllAsync()
@@ -57,6 +39,22 @@ public class StudentService : IStudentService
     {
         if (student == null) { return false; }
         await _studentContext.Students.AddAsync(student);
+        await _studentContext.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> DeleteAsync(int studentId)
+    {
+        var student = await _studentContext.Students.FindAsync(studentId);
+        if (_studentContext == null)
+        {
+            return false;
+        }
+        if (student == null)
+        {
+            return false;
+        }
+        _studentContext.Students.Remove(student);
         await _studentContext.SaveChangesAsync();
         return true;
     }
