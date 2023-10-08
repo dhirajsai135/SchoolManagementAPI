@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SchoolManagementAPI.Models;
-
-namespace SchoolManagementAPI.Controllers;
+﻿namespace SchoolManagementAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -39,7 +36,7 @@ public class StudentsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> SaveAsync([FromBody]Student student)
+    public async Task<ActionResult> SaveAsync([FromBody] Student student)
     {
         try
         {
