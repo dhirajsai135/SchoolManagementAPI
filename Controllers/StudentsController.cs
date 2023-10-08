@@ -4,19 +4,22 @@
 [ApiController]
 public class StudentsController : ControllerBase
 {
-    private readonly StudentContext _studentContext;
-    public StudentsController(StudentContext studentContext)
+    private readonly IStudentService _studentService;
+    public StudentsController(IStudentService studentService)
     {
-        _studentContext = studentContext;
+        _studentService = studentService;
     }
-
     [HttpGet]
     public async Task<ActionResult<List<Student>>> GetAllAsync()
     {
-        if (_studentContext == null)
+        try
         {
-            return NotFound();
+            return await _studentService.GetAllAsync();
         }
-        return await (_studentContext.Students.ToListAsync());
+        catch (Exception ex)
+        {
+
+            throw ex;
+        }
     }
 }
