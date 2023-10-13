@@ -2,10 +2,8 @@
 
 public class EnrollmentVM
 {
-    public string StudentName { get; set; }
-    public string CourseName { get; set; }
-    public string ClassName { get; set; }
-    public string SectionName { get; set; }
-    public int Marks { get; set; }
-    public string Description { get; set; }
+    public int Id { get; set; }
+    public int StudentId { get; set; }
+    public int CourseId { get; set; }
+    public int Grade { get; set; }
 }
