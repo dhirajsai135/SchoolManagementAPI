@@ -1,20 +1,22 @@
-﻿namespace SchoolManagementAPI.Controllers;
+﻿// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+
+namespace SchoolManagementAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class StudentsController : ControllerBase
+public class CourseController : ControllerBase
 {
-    private readonly IStudentService _studentService;
-    public StudentsController(IStudentService studentService)
+    private readonly ICourseService _courseService;
+    public CourseController(ICourseService enrollmentService)
     {
-        _studentService = studentService;
+        _courseService = enrollmentService;
     }
     [HttpGet("GetAll")]
     public async Task<ActionResult> GetAllAsync()
     {
         try
         {
-            return Ok(await _studentService.GetAllAsync());
+            return Ok(await _courseService.GetAllAsync());
         }
         catch (Exception)
         {
@@ -26,7 +28,7 @@ public class StudentsController : ControllerBase
     {
         try
         {
-            return Ok(await _studentService.GetAsync(id));
+            return Ok(await _courseService.GetAsync(id));
         }
         catch (Exception)
         {
@@ -34,11 +36,11 @@ public class StudentsController : ControllerBase
         }
     }
     [HttpPost]
-    public async Task<ActionResult> SaveAsync([FromBody] Student student)
+    public async Task<ActionResult> SaveAsync([FromBody] Course course)
     {
         try
         {
-            return Ok(await _studentService.SaveAsync(student));
+            return Ok(await _courseService.SaveAsync(course));
         }
         catch (Exception)
         {
@@ -46,12 +48,12 @@ public class StudentsController : ControllerBase
         }
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {
         try
         {
-            return Ok(await _studentService.DeleteAsync(id));
+            return Ok(await _courseService.DeleteAsync(id));
         }
         catch (Exception)
         {

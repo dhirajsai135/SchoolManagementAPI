@@ -1,20 +1,21 @@
 ﻿namespace SchoolManagementAPI.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/[controller]/[action]")]
 [ApiController]
-public class StudentsController : ControllerBase
+public class ClassesController : ControllerBase
 {
-    private readonly IStudentService _studentService;
-    public StudentsController(IStudentService studentService)
+    private readonly IClassService _classService;
+    public ClassesController(IClassService classService)
     {
-        _studentService = studentService;
+        _classService = classService;
     }
-    [HttpGet("GetAll")]
+
+    [HttpGet]
     public async Task<ActionResult> GetAllAsync()
     {
         try
         {
-            return Ok(await _studentService.GetAllAsync());
+            return Ok(await _classService.GetAllAsync());
         }
         catch (Exception)
         {
@@ -26,19 +27,7 @@ public class StudentsController : ControllerBase
     {
         try
         {
-            return Ok(await _studentService.GetAsync(id));
-        }
-        catch (Exception)
-        {
-            throw;
-        }
-    }
-    [HttpPost]
-    public async Task<ActionResult> SaveAsync([FromBody] Student student)
-    {
-        try
-        {
-            return Ok(await _studentService.SaveAsync(student));
+            return Ok(await _classService.GetAsync(id));
         }
         catch (Exception)
         {
@@ -46,12 +35,25 @@ public class StudentsController : ControllerBase
         }
     }
 
-    [HttpDelete]
+    [HttpPost]
+    public async Task<ActionResult> SaveAsync([FromBody] Class classVM)
+    {
+        try
+        {
+            return Ok(await _classService.SaveAsync(classVM));
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {
         try
         {
-            return Ok(await _studentService.DeleteAsync(id));
+            return Ok(await _classService.DeleteAsync(id));
         }
         catch (Exception)
         {

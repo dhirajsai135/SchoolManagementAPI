@@ -2,5 +2,9 @@
 
 public interface IEnrollmentService
 {
-    List<EnrollmentVM> GetEnrollmentAsync();
+    Task<List<EnrollmentVM>> GetAllAsync();
+    Task<bool> SaveAsync(Enrollment enrollment);
+    Task<EnrollmentVM> GetAsync(int enrollmentId);
+    Task<bool> DeleteAsync(int enrollmentId);
+    List<StudentEnrollmentsVM> GetEnrollmentBasedOnStudentsAsync();
 }

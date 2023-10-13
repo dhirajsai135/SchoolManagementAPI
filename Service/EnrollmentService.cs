@@ -1,8 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
-using System.Collections.Generic;
-using System.Data;
-
-namespace SchoolManagementAPI.Service;
+﻿namespace SchoolManagementAPI.Service;
 
 public class EnrollmentService : IEnrollmentService
 {
@@ -14,9 +10,59 @@ public class EnrollmentService : IEnrollmentService
         _studentContext = studentContext;
         _mapper = mapper;
     }
-    public List<EnrollmentVM> GetEnrollmentAsync()
+    public async  Task<List<EnrollmentVM>> GetAllAsync()
     {
-        List<EnrollmentVM> result = new();
+        if (_studentContext == null)
+        {
+            return new List<EnrollmentVM>();
+        }
+        var response = await _studentContext.Enrollments.ToListAsync();
+        return _mapper.Map<List<EnrollmentVM>>(response);
+    }
+    
+    public async Task<EnrollmentVM> GetAsync(int enrollmentId)
+    {
+        EnrollmentVM enrollment = new();
+        if (_studentContext == null)
+        {
+            return enrollment;
+        }
+        var response = await _studentContext.Enrollments.FindAsync(enrollmentId);
+        if (response == null)
+        {
+            return enrollment;
+        }
+        var result = _mapper.Map<EnrollmentVM>(response);
+        return result;
+    }
+
+    public async Task<bool> SaveAsync(Enrollment enrollment)
+    {
+        if (enrollment == null) { return false; }
+        await _studentContext.Enrollments.AddAsync(enrollment);
+        await _studentContext.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> DeleteAsync(int enrollmentId)
+    {
+        var enrollment = await _studentContext.Enrollments.FindAsync(enrollmentId);
+        if (_studentContext == null)
+        {
+            return false;
+        }
+        if (enrollment == null)
+        {
+            return false;
+        }
+        _studentContext.Enrollments.Remove(enrollment);
+        await _studentContext.SaveChangesAsync();
+        return true;
+    }
+
+    public List<StudentEnrollmentsVM> GetEnrollmentBasedOnStudentsAsync()
+    {
+        List<StudentEnrollmentsVM> result = new();
         using (var connection = new Microsoft.Data.SqlClient.SqlConnection(connectionString))
         {
             connection.Open();
@@ -27,21 +73,22 @@ public class EnrollmentService : IEnrollmentService
                 {
                     while (reader.Read())
                     {
-                        EnrollmentVM vm = new EnrollmentVM()
+                        StudentEnrollmentsVM vm = new StudentEnrollmentsVM()
                         {
-                            StudentName = reader["StudentName"].ToString(),
-                            CourseName = reader["CourseName"].ToString(),
-                            ClassName = reader["ClassName"].ToString(),
-                            SectionName = reader["SectionName"].ToString(),
+                            StudentName = reader["StudentName"].ToString() ?? string.Empty,
+                            CourseName = reader["CourseName"].ToString() ?? string.Empty,
+                            ClassName = reader["ClassName"].ToString() ?? string.Empty,
+                            SectionName = reader["SectionName"].ToString() ?? string.Empty,
                             Marks = Convert.ToInt32(reader["Marks"]),
-                            Description = reader["Description"].ToString()
+                            Description = reader["Description"].ToString() ?? string.Empty
                         };
                         result.Add(vm);
                     }
                 }
             }
         }
-        
+
         return result;
     }
+
 }
