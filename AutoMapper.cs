@@ -8,5 +8,7 @@ public class AutoMapper : Profile
         CreateMap<Enrollment,EnrollmentVM>();
         CreateMap<Course,CourseVM>();
         CreateMap<Class,ClassVM>();
+        CreateMap<User,UserVM>();
+        CreateMap<UserVM,User>();
     }
 }

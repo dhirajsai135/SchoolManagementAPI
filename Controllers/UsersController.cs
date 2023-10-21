@@ -4,103 +4,83 @@
 [ApiController]
 public class UsersController : ControllerBase
 {
-    private readonly StudentContext _context;
+    private readonly IUserService _userService;
 
-    public UsersController(StudentContext context)
+    public UsersController(IUserService userService)
     {
-        _context = context;
+        _userService = userService;
+    }
+
+    [Route("Login")]
+    [HttpPost]
+    public async Task<ActionResult> Login([FromBody] LoginRequest loginRequest)
+    {
+        try
+        {
+            return Ok(await _userService.Login(loginRequest.Email, loginRequest.Password));
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+    public async Task<ActionResult> GetUsers()
     {
-        if (_context.Users == null)
+        try
         {
-            return NotFound();
+            return Ok(await _userService.GetUsers());
         }
-        return await _context.Users.ToListAsync();
+        catch (Exception)
+        {
+
+            throw;
+        }
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<User>> GetUser(int id)
     {
-        if (_context.Users == null)
-        {
-            return NotFound();
-        }
-        var user = await _context.Users.FindAsync(id);
-
-        if (user == null)
-        {
-            return NotFound();
-        }
-
-        return user;
-    }
-
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutUser(int id, User user)
-    {
-        if (id != user.Id)
-        {
-            return BadRequest();
-        }
-
-        _context.Entry(user).State = EntityState.Modified;
-
         try
         {
-            await _context.SaveChangesAsync();
+            return Ok(await _userService.GetUser(id));
         }
-        catch (DbUpdateConcurrencyException)
+        catch (Exception)
         {
-            if (!UserExists(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
-        }
 
-        return NoContent();
+            throw;
+        }
     }
 
     [HttpPost]
-    public async Task<ActionResult<User>> PostUser(User user)
+    public async Task<ActionResult<User>> PostUser(UserVM user)
     {
-        if (_context.Users == null)
+        try
         {
-            return Problem("Entity set 'StudentContext.Users'  is null.");
+            return Ok(await _userService.SaveUser(user));
         }
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+        catch (Exception)
+        {
 
-        return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            throw;
+        }
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(int id)
     {
-        if (_context.Users == null)
+        try
         {
-            return NotFound();
+            return Ok(await _userService.DeleteUser(id));
         }
-        var user = await _context.Users.FindAsync(id);
-        if (user == null)
+        catch (Exception)
         {
-            return NotFound();
+
+            throw;
         }
-
-        _context.Users.Remove(user);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
     }
 
-    private bool UserExists(int id)
-    {
-        return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
-    }
+
 }
